@@ -26,6 +26,7 @@ class BlockingView extends Component {
 		this.state = {
 			policy: this.props.policy,
 		};
+		this._handleKeyPress = this._handleKeyPress.bind(this);
 	}
 
 	/**
@@ -51,7 +52,9 @@ class BlockingView extends Component {
 	 * @param  {Object} event The event created by onChange
 	 */
 	_handleChange = (event) => {
-		const policy = event.target.value;
+		const id = event.target.getAttribute('for');
+		const radioVal = document.getElementById(id).value;
+		const policy = event.target.value || radioVal
 		this.setState({
 			policy
 		});
@@ -102,6 +105,14 @@ class BlockingView extends Component {
 		this.props.actions.setupStep({ key: 'setup_block', value: blockValue });
 	}
 
+	_handleKeyPress = (evt) => {
+		if (evt.key === 'Enter' ) {
+			const id = evt.target.getAttribute('for');
+			document.getElementById(id).checked = true;
+			this._handleChange(evt);
+		}
+	}
+
 	/**
 	 * Shows the custom blocking menu
 	 */
@@ -120,6 +131,8 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-none-input"
 						className={`${this.state.policy === 'none' ? 'selected' : ''} box-link selectable`}
+						tabIndex="1"
+						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-none.svg" />
 						<span className="text">{ t('setup_blocking_view_block_nothing') }</span>
@@ -130,6 +143,8 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-ads-input"
 						className={`${this.state.policy === 'ads' ? 'selected' : ''} box-link selectable`}
+						tabIndex="1"
+						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-ads.svg" />
 						<span className="text">{ t('setup_blocking_view_block_ads') }</span>
@@ -140,6 +155,8 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-all-input"
 						className={`${this.state.policy === 'all' ? 'selected' : ''} box-link selectable`}
+						tabIndex="1"
+						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-all.svg" />
 						<span className="text">{ t('setup_blocking_view_block_everything') }</span>
@@ -150,6 +167,8 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-custom-input"
 						className={`${this.state.policy === 'custom' ? 'selected' : ''} box-link selectable`}
+						tabIndex="1"
+						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-custom.svg" />
 						<span className="text">{ t('setup_blocking_view_block_custom') }</span>

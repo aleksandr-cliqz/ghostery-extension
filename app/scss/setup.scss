@@ -43,7 +43,7 @@
 .selectable {
 	border: 2px solid transparent;
 	border-radius: 5px;
-	&:hover {
+	&:hover, &:focus {
 		border-color: $purple;
 	}
 	&.selected {
@@ -186,7 +186,7 @@ body {
 				border: 1px solid #979797;
 				margin: 10px;
 			}
-			a.active {
+			a.active, a:focus {
 				position: relative;
 				&::after {
 					content: '';

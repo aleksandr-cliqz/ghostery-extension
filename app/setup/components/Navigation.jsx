@@ -117,13 +117,13 @@ class Navigation extends Component {
 						</div>
 						<div className="columns text-center navigation-dots">
 							<div className="circles">
-								<NavLink to="/" exact />
-								<NavLink to="/blocking" exact />
-								<NavLink to="/additional-features" exact />
-								<NavLink to="/display" exact />
-								<NavLink to="/log-in" exact />
-								<NavLink to="/data-collection" exact />
-								<NavLink to="/done" exact />
+								<NavLink to="/" exact tabIndex="0" />
+								<NavLink to="/blocking" exact tabIndex="0" />
+								<NavLink to="/additional-features" exact tabIndex="0" />
+								<NavLink to="/display" exact tabIndex="0" />
+								<NavLink to="/log-in" exact tabIndex="0" />
+								<NavLink to="/data-collection" exact tabIndex="0" />
+								<NavLink to="/done" exact tabIndex="0" />
 							</div>
 						</div>
 						{nextButtons.map((button, i) => {

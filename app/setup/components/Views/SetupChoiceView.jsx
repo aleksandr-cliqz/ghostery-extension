@@ -86,7 +86,7 @@ class SetupChoiceView extends Component {
 				<div className="columns small-12 medium-9 large-6">
 					<div className="row small-up-2 align-center">
 						<div className="columns one-click">
-							<Link to="/done" className="button box-link selectable" onClick={this._oneClickSetup}>
+							<Link to="/done" tabIndex="1" className="button box-link selectable" onClick={this._oneClickSetup}>
 								<img src="/app/images/setup/circles/lines.svg" />
 								<span className="text">{ t('setup_choice_view_one_click') }</span>
 							</Link>
@@ -111,7 +111,7 @@ class SetupChoiceView extends Component {
 							</div>
 						</div>
 						<div className="columns custom">
-							<Link to="/blocking" className="button box-link selectable" onClick={this._customSetup}>
+							<Link to="/blocking" tabIndex="1" className="button box-link selectable" onClick={this._customSetup}>
 								<img src="/app/images/setup/circles/clipboard.svg" />
 								<span className="text">{ t('setup_choice_view_custom_setup') }</span>
 							</Link>
