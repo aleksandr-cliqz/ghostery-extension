@@ -54,7 +54,7 @@ class BlockingView extends Component {
 	_handleChange = (event) => {
 		const id = event.target.getAttribute('for');
 		const radioVal = document.getElementById(id).value;
-		const policy = event.target.value || radioVal
+		const policy = event.target.value || radioVal;
 		this.setState({
 			policy
 		});
@@ -106,7 +106,7 @@ class BlockingView extends Component {
 	}
 
 	_handleKeyPress = (evt) => {
-		if (evt.key === 'Enter' ) {
+		if (evt.key === 'Enter') {
 			const id = evt.target.getAttribute('for');
 			document.getElementById(id).checked = true;
 			this._handleChange(evt);
@@ -131,7 +131,7 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-none-input"
 						className={`${this.state.policy === 'none' ? 'selected' : ''} box-link selectable`}
-						tabIndex="1"
+						tabIndex="0"
 						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-none.svg" />
@@ -143,7 +143,7 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-ads-input"
 						className={`${this.state.policy === 'ads' ? 'selected' : ''} box-link selectable`}
-						tabIndex="1"
+						tabIndex="0"
 						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-ads.svg" />
@@ -155,7 +155,7 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-all-input"
 						className={`${this.state.policy === 'all' ? 'selected' : ''} box-link selectable`}
-						tabIndex="1"
+						tabIndex="0"
 						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-all.svg" />
@@ -167,7 +167,7 @@ class BlockingView extends Component {
 					<label
 						htmlFor="block-custom-input"
 						className={`${this.state.policy === 'custom' ? 'selected' : ''} box-link selectable`}
-						tabIndex="1"
+						tabIndex="0"
 						onKeyPress={this._handleKeyPress}
 					>
 						<img src="/app/images/setup/circles/block-custom.svg" />
