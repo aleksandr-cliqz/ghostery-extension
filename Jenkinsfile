@@ -1,18 +1,9 @@
-
-properties([
-    parameters([
-        booleanParam(name: 'WITH_CLIQZ_MASTER', defaultValue: false, description: 'Builds with latest Cliqz master')
-    ])
-])
-
 node('docker') {
     stage ('Checkout') {
         checkout scm
     }
 
     def img
-    def artifacts = []
-    def uploadPath = "cdncliqz/update/ghostery/android"
 
     stage('Build Docker Image') {
         img = docker.build('ghostery/build', '--build-arg UID=`id -u` --build-arg GID=`id -g` .')
@@ -20,65 +11,33 @@ node('docker') {
         sh 'rm -rf build ghostery-*'
     }
 
-    stage('Build Extension') {
+    stage('Build sign and publish') {
         img.inside() {
             withCache {
-                withEnv(["NO_LINT=true"]) {
-                    sh 'rm -rf build'
-                    if (params.WITH_CLIQZ_MASTER) {
-                        sh 'yarn add https://s3.amazonaws.com/cdncliqz/update/edge/ghostery/master/latest.tgz'
-                    }
-                    // make browser-core noisy
-                    sh 'sed -i \'s/global.__DEV__/true/1\' node_modules/browser-core/build/core/console.js'
-                    withGithubCredentials {
-                        sh 'moab makezip production'
-                    }
-                    // get the name of the firefox build
-                    artifacts.add(sh(returnStdout: true, script: 'ls build/ | grep firefox').trim())
+                sh 'rm -rf build'
+                withGithubCredentials {
+                    sh 'moab makezip production'
                 }
             }
         }
-    }
-
-    stage('Upload Builds') {
         withS3Credentials {
-            echo "${env.BRANCH_NAME}/${env.BUILD_NUMBER}"
+            // get the name of the firefox build
+            def artifact = sh(returnStdout: true, script: 'ls build/ | grep firefox').trim()
+
+            // build
+            def uploadPath = "cdncliqz/update/android_browser_pre/firefox@ghostery.com"
             def uploadLocation = "s3://${uploadPath}"
             currentBuild.description = uploadLocation
-            artifacts.each {
-                sh "aws s3 cp build/${it} ${uploadLocation}/${env.BRANCH_NAME}/  --acl public-read"
-                sh "aws s3 cp build/${it} ${uploadLocation}/latest.zip  --acl public-read"
-            }
-        }
-    }
+            sh "aws s3 cp build/${artifact} ${uploadLocation}/  --acl public-read"
 
-    stage('Publish Beta') {
-        artifacts.each {
-            if (it.contains('firefox')) {
-                // firefox artifact (zip) - sign for cliqz_beta
-                def artifactUrl = "https://s3.amazonaws.com/${uploadPath}/${it}"
-                build job: 'addon-repack', parameters: [
-                    string(name: 'XPI_URL', value: artifactUrl),
-                    string(name: 'XPI_SIGN_CREDENTIALS', value: '41572f9c-06aa-46f0-9c3b-b7f4f78e9caa'),
-                    string(name: 'XPI_SIGN_REPO_URL', value: 'git@github.com:cliqz/xpi-sign.git'),
-                    string(name: 'CHANNEL', value: 'android_browser_beta')
-                ]
-            }
-        }
-    }
-
-    stage('Publish Beta') {
-        artifacts.each {
-            if (it.contains('firefox')) {
-                // firefox artifact (zip) - sign for cliqz_beta
-                def artifactUrl = "https://s3.amazonaws.com/${uploadPath}/${env.BRANCH_NAME}/${it}"
-                build job: 'addon-repack', parameters: [
-                    string(name: 'XPI_URL', value: artifactUrl),
-                    string(name: 'XPI_SIGN_CREDENTIALS', value: '41572f9c-06aa-46f0-9c3b-b7f4f78e9caa'),
-                    string(name: 'XPI_SIGN_REPO_URL', value: 'git@github.com:cliqz/xpi-sign.git'),
-                    string(name: 'CHANNEL', value: 'android_browser_beta')
-                ]
-            }
+            // publish
+            def artifactUrl = "https://s3.amazonaws.com/${uploadPath}/${artifact}"
+            build job: 'addon-repack', parameters: [
+                string(name: 'XPI_URL', value: artifactUrl),
+                string(name: 'XPI_SIGN_CREDENTIALS', value: '41572f9c-06aa-46f0-9c3b-b7f4f78e9caa'),
+                string(name: 'XPI_SIGN_REPO_URL', value: 'git@github.com:cliqz/xpi-sign.git'),
+                string(name: 'CHANNEL', value: 'android_browser')
+            ]
         }
     }
 }
