@@ -31,7 +31,7 @@ node('docker') {
                     // make browser-core noisy
                     sh 'sed -i \'s/global.__DEV__/true/1\' node_modules/browser-core/build/core/console.js'
                     withGithubCredentials {
-                        sh 'moab makezip'
+                        sh 'moab makezip production'
                     }
                     // get the name of the firefox build
                     artifacts.add(sh(returnStdout: true, script: 'ls build/ | grep firefox').trim())
